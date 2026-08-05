@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page - Syni Web Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(20, 20, 30, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .test-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .test-header p {
+            color: #888;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .status-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        .status-value.pass {
+            color: #4ade80;
+        }
+
+        .status-value.fail {
+            color: #f87171;
+        }
+
+        .status-value.warning {
+            color: #fbbf24;
+        }
+
+        .test-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .test-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .test-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .test-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .test-item .label {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .test-item .result {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .test-item .result.pass {
+            color: #4ade80;
+        }
+
+        .test-item .result.fail {
+            color: #f87171;
+        }
+
+        .test-item .result.warning {
+            color: #fbbf24;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #4ade80;
+            color: #000;
+        }
+
+        .btn-success:hover {
+            background: #3dca70;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 222, 128, 0.3);
+        }
+
+        .log-area {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #888;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-area .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .log-area .log-entry .time {
+            color: #555;
+            margin-right: 10px;
+        }
+
+        .log-area .log-entry .ok {
+            color: #4ade80;
+        }
+
+        .log-area .log-entry .err {
+            color: #f87171;
+        }
+
+        .log-area .log-entry .warn {
+            color: #fbbf24;
+        }
+
+        @media (max-width: 600px) {
+            .test-container {
+                padding: 20px;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .test-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h1>?? Syni Web Test</h1>
+            <p>Check if everything is working correctly</p>
+        </div>
+
+        <!-- Status Grid -->
+        <div class="status-grid" id="statusGrid">
+            <div class="status-card">
+                <div class="status-icon">??</div>
+                <div class="status-label">Page Load</div>
+                <div class="status-value pass" id="statusLoad">? Loaded</div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon">??</div>
+                <div class="status-label">Local Storage</div>
+                <div class="status-value" id="statusStorage">? Testing...</div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon">??</div>
+                <div class="status-label">JavaScript</div>
+                <div class="status-value pass" id="statusJS">? Working</div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon">??</div>
+                <div class="status-label">Viewport</div>
+                <div class="status-value" id="statusViewport">? Checking...</div>
+            </div>
+        </div>
+
+        <!-- Test Section -->
+        <div class="test-section">
+            <h3>? Quick Tests</h3>
+            <div class="test-list" id="testList">
+                <div class="test-item">
+                    <span class="label">Console Log</span>
+                    <span class="result" id="testConsole">? Testing...</span>
+                </div>
+                <div class="test-item">
+                    <span class="label">DOM Manipulation</span>
+                    <span class="result" id="testDOM">? Testing...</span>
+                </div>
+                <div class="test-item">
+                    <span class="label">Fetch API</span>
+                    <span class="result" id="testFetch">? Testing...</span>
+                </div>
+                <div class="test-item">
+                    <span class="label">Iframe Creation</span>
+                    <span class="result" id="testIframe">? Testing...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="runAllTests()">?? Run All Tests</button>
+            <button class="btn btn-success" onclick="testIframeLoad()">?? Test Iframe</button>
+            <button class="btn btn-secondary" onclick="clearLog()">??? Clear Log</button>
+        </div>
+
+        <!-- Log Area -->
+        <div class="log-area" id="logArea">
+            <div class="log-entry"><span class="time">[System]</span> <span class="ok">Test page loaded successfully</span></div>
+            <div class="log-entry"><span class="time">[System]</span> <span class="warn">Click "Run All Tests" to check everything</span></div>
+        </div>
+    </div>
+
+    <!-- Hidden iframe for testing -->
+    <div id="iframeContainer" style="display:none;"></div>
+
+    <script>
+        // Logging function
+        function addLog(message, type = 'ok') {
+            const logArea = document.getElementById('logArea');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const time = new Date().toLocaleTimeString();
+            entry.innerHTML = `<span class="time">[${time}]</span> <span class="${type}">${message}</span>`;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logArea').innerHTML = '';
+            addLog('Log cleared', 'warn');
+        }
+
+        // Test: Local Storage
+        function testLocalStorage() {
+            try {
+                const testKey = 'test_syni_' + Date.now();
+                localStorage.setItem(testKey, 'working');
+                const result = localStorage.getItem(testKey);
+                localStorage.removeItem(testKey);
+                if (result === 'working') {
+                    document.getElementById('statusStorage').textContent = '? Working';
+                    document.getElementById('statusStorage').className = 'status-value pass';
+                    addLog('Local Storage: Working ?', 'ok');
+                    return true;
+                } else {
+                    throw new Error('Storage read failed');
+                }
+            } catch (e) {
+                document.getElementById('statusStorage').textContent = '? Failed';
+                document.getElementById('statusStorage').className = 'status-value fail';
+                addLog('Local Storage: Failed - ' + e.message, 'err');
+                return false;
+            }
+        }
+
+        // Test: Viewport
+        function testViewport() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const el = document.getElementById('statusViewport');
+            if (w > 0 && h > 0) {
+                el.textContent = `? ${w}×${h}`;
+                el.className = 'status-value pass';
+                addLog(`Viewport: ${w}×${h}`, 'ok');
+                return true;
+            } else {
+                el.textContent = '? Unknown';
+                el.className = 'status-value fail';
+                addLog('Viewport: Could not detect', 'err');
+                return false;
+            }
+        }
+
+        // Test: Console
+        function testConsole() {
+            try {
+                console.log('%c[Syni Test] Console is working!', 'color: #4ade80; font-size: 14px; font-weight: bold;');
+                document.getElementById('testConsole').textContent = '? Working';
+                document.getElementById('testConsole').className = 'result pass';
+                addLog('Console: Working ?', 'ok');
+                return true;
+            } catch (e) {
+                document.getElementById('testConsole').textContent = '? Failed';
+                document.getElementById('testConsole').className = 'result fail';
+                addLog('Console: Failed - ' + e.message, 'err');
+                return false;
+            }
+        }
+
+        // Test: DOM
+        function testDOM() {
+            try {
+                const div = document.createElement('div');
+                div.id = 'test_dom_' + Date.now();
+                div.textContent = 'test';
+                document.body.appendChild(div);
+                const found = document.getElementById(div.id);
+                document.body.removeChild(div);
+                if (found) {
+                    document.getElementById('testDOM').textContent = '? Working';
+                    document.getElementById('testDOM').className = 'result pass';
+                    addLog('DOM Manipulation: Working ?', 'ok');
+                    return true;
+                } else {
+                    throw new Error('DOM element not found');
+                }
+            } catch (e) {
+                document.getElementById('testDOM').textContent = '? Failed';
+                document.getElementById('testDOM').className = 'result fail';
+                addLog('DOM Manipulation: Failed - ' + e.message, 'err');
+                return false;
+            }
+        }
+
+        // Test: Fetch
+        function testFetch() {
+            return fetch('https://httpbin.org/get')
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('testFetch').textContent = '? Working';
+                        document.getElementById('testFetch').className = 'result pass';
+                        addLog('Fetch API: Working ?', 'ok');
+                        return true;
+                    } else {
+                        throw new Error('Response not OK');
+                    }
+                })
+                .catch(e => {
+                    document.getElementById('testFetch').textContent = '?? CORS?';
+                    document.getElementById('testFetch').className = 'result warning';
+                    addLog('Fetch API: Could not reach external server (CORS?) - ' + e.message, 'warn');
+                    return false;
+                });
+        }
+
+        // Test: Iframe
+        function testIframe() {
+            try {
+                const container = document.getElementById('iframeContainer');
+                const iframe = document.createElement('iframe');
+                iframe.src = 'about:blank';
+                iframe.style.width = '100px';
+                iframe.style.height = '100px';
+                container.appendChild(iframe);
+                
+                setTimeout(() => {
+                    try {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (doc) {
+                            document.getElementById('testIframe').textContent = '? Working';
+                            document.getElementById('testIframe').className = 'result pass';
+                            addLog('Iframe Creation: Working ?', 'ok');
+                        }
+                    } catch (e) {
+                        document.getElementById('testIframe').textContent = '?? Limited';
+                        document.getElementById('testIframe').className = 'result warning';
+                        addLog('Iframe Creation: Limited access - ' + e.message, 'warn');
+                    }
+                    container.removeChild(iframe);
+                }, 500);
+                return true;
+            } catch (e) {
+                document.getElementById('testIframe').textContent = '? Failed';
+                document.getElementById('testIframe').className = 'result fail';
+                addLog('Iframe Creation: Failed - ' + e.message, 'err');
+                return false;
+            }
+        }
+
+        // Test iframe load (button)
+        function testIframeLoad() {
+            addLog('Opening test iframe...', 'warn');
+            const container = document.getElementById('iframeContainer');
+            container.style.display = 'block';
+            container.style.position = 'fixed';
+            container.style.top = '50%';
+            container.style.left = '50%';
+            container.style.transform = 'translate(-50%, -50%)';
+            container.style.zIndex = '999999';
+            container.style.background = '#000';
+            container.style.border = '2px solid #667eea';
+            container.style.borderRadius = '12px';
+            container.style.width = '80%';
+            container.style.maxWidth = '600px';
+            container.style.height = '400px';
+            container.style.overflow = 'hidden';
+
+            const iframe = document.createElement('iframe');
+            iframe.src = 'https://example.com';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            iframe.style.background = '#fff';
+            container.innerHTML = '';
+            container.appendChild(iframe);
+
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '? Close';
+            closeBtn.style.cssText = 'position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.8);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:14px;z-index:10;';
+            closeBtn.onclick = function() {
+                container.style.display = 'none';
+                container.innerHTML = '';
+                addLog('Iframe closed', 'warn');
+            };
+            container.appendChild(closeBtn);
+
+            addLog('Iframe opened with example.com', 'ok');
+        }
+
+        // Run all tests
+        function runAllTests() {
+            addLog('=== Starting all tests ===', 'warn');
+            
+            const tests = [
+                testLocalStorage(),
+                testViewport(),
+                testConsole(),
+                testDOM(),
+                testIframe()
+            ];
+
+            // Fetch is async
+            testFetch().then(() => {
+                const allPassed = tests.every(r => r === true);
+                if (allPassed) {
+                    addLog('? All tests passed!', 'ok');
+                } else {
+                    addLog('?? Some tests failed. Check the results above.', 'warn');
+                }
+            });
+
+            addLog('=== Tests completed ===', 'warn');
+        }
+
+        // Auto-run on load
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('DOM ready, running initial tests...', 'warn');
+            
+            setTimeout(() => {
+                runAllTests();
+            }, 500);
+        });
+
+        // Also run on load
+        window.addEventListener('load', function() {
+            addLog('Window fully loaded', 'ok');
+        });
+
+        // Error handler
+        window.addEventListener('error', function(e) {
+            addLog('Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno, 'err');
+        });
+
+        console.log('%c?? Syni Web Test Page Loaded', 'color: #667eea; font-size: 20px; font-weight: bold;');
+        console.log('%cCheck the test results below ??', 'color: #888; font-size: 14px;');
+    </script>
+
+</body>
+</html>
